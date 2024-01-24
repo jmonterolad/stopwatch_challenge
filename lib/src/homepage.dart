@@ -1,38 +1,14 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:stop_watch_timer/stop_watch_timer.dart';
+// import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'dart:async';
 import 'clockwidget.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // title: 'Flutter Demo',
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   useMaterial3: true,
-      // ),
-      home: StopwatchApp(),
-    );
-  }
+  _MyAppState createState() => _MyAppState();
 }
 
-class StopwatchApp extends StatefulWidget {
-  const StopwatchApp({super.key});
-
-  @override
-  State<StopwatchApp> createState() => _StopwatchAppState();
-}
-
-class _StopwatchAppState extends State<StopwatchApp> {
+class _MyAppState extends State<MyApp> {
   Duration duration = const Duration();
   Timer? timer;
 
