@@ -32,64 +32,78 @@ class StopwatchApp extends StatefulWidget {
 }
 
 class _StopwatchAppState extends State<StopwatchApp> {
-  // late final StopWatchTimer _stopWatchTimer;
-  int second = 0, minutes = 0, hours = 0;
-  String digitSeconds = "00", digitMinutes = "00", digitHours = "00";
+  int elapsedMilliseconds = 0, seconds = 0, minutes = 0;
+  String digitSeconds = "00", digitMinutes = "00";
   Timer? timer;
   bool started = false;
-  List laps = [];
+  List<DataRow> lapRows = [];
+
+  Stopwatch stopwatch = Stopwatch();
+  int lapNumber = 0;
+  int maxVisibleLaps = 5; // Set the maximum number of visible laps
 
   void stop() {
-    timer!.cancel();
+    stopwatch.stop();
+    timer?.cancel();
     setState(() {
       started = false;
     });
   }
 
   void reset() {
-    timer!.cancel();
+    timer?.cancel();
     setState(() {
-      second = 0;
+      stopwatch.reset();
+      elapsedMilliseconds = 0;
+      seconds = 0;
       minutes = 0;
-      hours = 0;
       digitSeconds = "00";
       digitMinutes = "00";
-      digitHours = "00";
       started = false;
-      laps.clear();
+      lapRows.clear();
+      lapNumber = 0;
     });
   }
 
   void addLaps() {
-    String lap = "$digitHours:$digitMinutes:$digitSeconds";
-    setState(() {
-      laps.add(lap);
-    });
+    lapNumber++;
+    String lapTime = "$digitMinutes:$digitSeconds.${(elapsedMilliseconds % 1000).toString().padLeft(3, '0')}";
+    String overallTime = "$digitMinutes:$digitSeconds";
+
+    // Create a DataRow for the lap and add it to lapRows
+    lapRows.insert(
+      0,
+      DataRow(
+        cells: [
+          DataCell(Text("Lap $lapNumber")),
+          DataCell(Text(lapTime)),
+          DataCell(Text(overallTime)),
+        ],
+      ),
+    );
+
+    // Limit the number of visible laps
+    if (lapRows.length > maxVisibleLaps) {
+      lapRows.sort();
+    }
+
+    setState(() {});
   }
 
   void start() {
+    stopwatch.start();
     started = true;
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      int localSeconds = second + 1;
-      int localMinutes = minutes;
-      int localHours = hours;
+    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      int localMilliseconds = stopwatch.elapsedMilliseconds;
+      int localSeconds = localMilliseconds ~/ 1000;
+      int localMinutes = localSeconds ~/ 60;
 
-      if (localSeconds > 59) {
-        if (localMinutes > 59) {
-          localHours++;
-          localMinutes = 0;
-        } else {
-          localMinutes++;
-          localSeconds = 0;
-        }
-      }
       setState(() {
-        second = localSeconds;
+        elapsedMilliseconds = localMilliseconds;
+        seconds = localSeconds % 60;
         minutes = localMinutes;
-        hours = localHours;
-        digitSeconds = (second >= 10) ? "$second" : "0$second";
-        digitMinutes = (minutes >= 10) ? "$minutes" : "$minutes";
-        digitHours = (hours >= 10) ? "$hours" : "$hours";
+        digitSeconds = (seconds >= 10) ? "$seconds" : "0$seconds";
+        digitMinutes = (minutes >= 10) ? "$minutes" : "0$minutes";
       });
     });
   }
@@ -97,52 +111,44 @@ class _StopwatchAppState extends State<StopwatchApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(child: Text('Hello, World!')),
-              SizedBox(
+              const SizedBox(
                 height: 16.0,
               ),
               Center(
                 child: Text(
-                  "$digitHours:$digitMinutes:$digitSeconds",
-                  style: TextStyle(
+                  "$digitMinutes:$digitSeconds.${(elapsedMilliseconds % 1000).toString().padLeft(3, '0')}",
+                  style: const TextStyle(
                     fontSize: 48.0,
                     color: Colors.white,
                   ),
                 ),
               ),
-              // Optional Timer
-              // Center(
-              //   child: Text("00:00:00", style: TextStyle(color: Colors.white),)
+              // const SizedBox(
+              //   height: 16.0,
               // ),
               Container(
-                height: 400.0,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 34, 32, 32),
-                  borderRadius: BorderRadius.circular(8.0),
+                height: 200.0, // Set the maximum height for the DataTable container
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Lap')),
+                      DataColumn(label: Text('Lap Times')),
+                      DataColumn(label: Text('Overall Time')),
+                    ],
+                    rows: lapRows,
+                  ),
                 ),
-                child: ListView.builder(
-                  itemCount: laps.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        laps[index],
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    );
-                  },
-                ),
-                // Optional ListView
-                
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16.0,
               ),
               Row(
@@ -151,42 +157,42 @@ class _StopwatchAppState extends State<StopwatchApp> {
                   Expanded(
                     child: RawMaterialButton(
                       onPressed: () => reset(),
-                      shape: StadiumBorder(
+                      shape: const StadiumBorder(
                         side: BorderSide(color: Colors.blue),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Reset',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8.0,
                   ),
                   Expanded(
                     child: RawMaterialButton(
                       onPressed: () => addLaps(),
-                      shape: StadiumBorder(
+                      shape: const StadiumBorder(
                         side: BorderSide(color: Colors.blue),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Lap',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8.0,
                   ),
                   Expanded(
                     child: RawMaterialButton(
                       onPressed: () => (!started) ? start() : stop(),
-                      shape: StadiumBorder(
+                      shape: const StadiumBorder(
                         side: BorderSide(color: Colors.blue),
                       ),
                       child: Text(
                         (!started) ? "Start" : "Pause",
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
