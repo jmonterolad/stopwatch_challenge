@@ -50,7 +50,7 @@ This app was built using Flutter.
 2. Clone this repository:
 
    ```bash
-   git clone https://github.com/your_username/stopwatch_app.git
+   git clone https://github.com/jmonterolad/stopwatch_app.git
 
    ```
 
