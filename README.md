@@ -50,12 +50,12 @@ This app was built using Flutter.
 2. Clone this repository:
 
    ```bash
-   git clone https://github.com/jmonterolad/stopwatch_app.git
+   git clone git@github.com:jmonterolad/stopwatch_challenge.git
 
    ```
 
 3. Navigate to the project directory:
-   cd stopwatch_app
+   cd stopwatch_challenge
 
 4. Run the app:
    flutter run
