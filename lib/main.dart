@@ -33,10 +33,13 @@ class StopwatchApp extends StatefulWidget {
 
 class _StopwatchAppState extends State<StopwatchApp> {
   int elapsedMilliseconds = 0, seconds = 0, minutes = 0;
-  String digitSeconds = "00", digitMinutes = "00";
+  String digitSeconds = "00", digitMinutes = "00", digitMilliseconds = "00";
   Timer? timer;
   bool started = false;
   List<DataRow> lapRows = [];
+  Color startButtonColor = const Color(0xFF6A5ACD);
+  Color pauseButtonColor = Colors.red;
+  Color lapButtonColor = const Color(0xFF808080);
 
   Stopwatch stopwatch = Stopwatch();
   int lapNumber = 0;
@@ -59,6 +62,7 @@ class _StopwatchAppState extends State<StopwatchApp> {
       minutes = 0;
       digitSeconds = "00";
       digitMinutes = "00";
+      digitMilliseconds = "00";
       started = false;
       lapRows.clear();
       lapNumber = 0;
@@ -66,28 +70,33 @@ class _StopwatchAppState extends State<StopwatchApp> {
   }
 
   void addLaps() {
-    lapNumber++;
-    String lapTime = "$digitMinutes:$digitSeconds.${(elapsedMilliseconds % 1000).toString().padLeft(3, '0')}";
-    String overallTime = "$digitMinutes:$digitSeconds";
+    if (started) {
+      lapNumber++;
+      String lapTime =
+          "$digitMinutes:$digitSeconds.${(elapsedMilliseconds % 1000 ~/ 10).toString().padLeft(2, '0')}";
+      String overallTime = "$digitMinutes:$digitSeconds";
 
-    // Create a DataRow for the lap and add it to lapRows
-    lapRows.insert(
-      0,
-      DataRow(
-        cells: [
-          DataCell(Text("Lap $lapNumber")),
-          DataCell(Text(lapTime)),
-          DataCell(Text(overallTime)),
-        ],
-      ),
-    );
+      // Create a DataRow for the lap and add it to lapRows
+      lapRows.insert(
+        0,
+        DataRow(
+          cells: [
+            DataCell(
+                Text("Lap $lapNumber", style: const TextStyle(color: Colors.white))),
+            DataCell(Text(lapTime, style: const TextStyle(color: Colors.white))),
+            DataCell(Text(overallTime, style: const TextStyle(color: Colors.white))),
+          ],
+        ),
+      );
 
-    // Limit the number of visible laps
-    if (lapRows.length > maxVisibleLaps) {
-      lapRows.sort();
+      // Limit the number of visible laps
+      if (lapRows.length > maxVisibleLaps) {
+        lapRows.sort();
+        lapRows.removeLast();
+      }
+
+      setState(() {});
     }
-
-    setState(() {});
   }
 
   void start() {
@@ -104,6 +113,8 @@ class _StopwatchAppState extends State<StopwatchApp> {
         minutes = localMinutes;
         digitSeconds = (seconds >= 10) ? "$seconds" : "0$seconds";
         digitMinutes = (minutes >= 10) ? "$minutes" : "0$minutes";
+        digitMilliseconds =
+            (localMilliseconds % 1000 ~/ 10).toString().padLeft(2, '0');
       });
     });
   }
@@ -124,25 +135,28 @@ class _StopwatchAppState extends State<StopwatchApp> {
               ),
               Center(
                 child: Text(
-                  "$digitMinutes:$digitSeconds.${(elapsedMilliseconds % 1000).toString().padLeft(3, '0')}",
+                  "$digitMinutes:$digitSeconds.$digitMilliseconds",
                   style: const TextStyle(
                     fontSize: 48.0,
                     color: Colors.white,
                   ),
                 ),
               ),
-              // const SizedBox(
-              //   height: 16.0,
-              // ),
-              Container(
-                height: 200.0, // Set the maximum height for the DataTable container
+              SizedBox(
+                height: 300.0,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: DataTable(
                     columns: const [
-                      DataColumn(label: Text('Lap')),
-                      DataColumn(label: Text('Lap Times')),
-                      DataColumn(label: Text('Overall Time')),
+                      DataColumn(
+                          label: Text('Lap',
+                              style: TextStyle(color: Colors.white))),
+                      DataColumn(
+                          label: Text('Lap Time',
+                              style: TextStyle(color: Colors.white))),
+                      DataColumn(
+                          label: Text('Overall Time',
+                              style: TextStyle(color: Colors.white))),
                     ],
                     rows: lapRows,
                   ),
@@ -157,9 +171,8 @@ class _StopwatchAppState extends State<StopwatchApp> {
                   Expanded(
                     child: RawMaterialButton(
                       onPressed: () => reset(),
-                      shape: const StadiumBorder(
-                        side: BorderSide(color: Colors.blue),
-                      ),
+                      shape: const StadiumBorder(),
+                      fillColor: startButtonColor,
                       child: const Text(
                         'Reset',
                         style: TextStyle(color: Colors.white),
@@ -173,8 +186,9 @@ class _StopwatchAppState extends State<StopwatchApp> {
                     child: RawMaterialButton(
                       onPressed: () => addLaps(),
                       shape: const StadiumBorder(
-                        side: BorderSide(color: Colors.blue),
+                        side: BorderSide(),
                       ),
+                      fillColor: lapButtonColor,
                       child: const Text(
                         'Lap',
                         style: TextStyle(color: Colors.white),
@@ -188,16 +202,18 @@ class _StopwatchAppState extends State<StopwatchApp> {
                     child: RawMaterialButton(
                       onPressed: () => (!started) ? start() : stop(),
                       shape: const StadiumBorder(
-                        side: BorderSide(color: Colors.blue),
+                        side: BorderSide(),
                       ),
+                      fillColor:
+                          (started) ? pauseButtonColor : startButtonColor,
                       child: Text(
-                        (!started) ? "Start" : "Pause",
+                        (started) ? "Pause" : "Start",
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
