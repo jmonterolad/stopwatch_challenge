@@ -1,16 +1,61 @@
-# stopwatch_challenge
+# Stopwatch App
 
-A new Flutter project.
+This is a simple stopwatch app built using Flutter. The app allows you to track time, record laps, and view lap times and overall time.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Start / Pause Button:** Start or pause the stopwatch timer.
+- **Reset Button:** Reset the stopwatch to zero.
+- **Lap Button:** Record a lap time.
+- **Lap Times Table:** View lap times and overall time in a scrollable table.
+- **Styling:** The start button has a background color of `#6A5ACD` and turns red when paused. The lap button has a background color of `#D3D3D3`.
 
-A few resources to get you started if this is your first Flutter project:
+## How to Use
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. **Start / Pause the Timer:**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+   - Press the "Start" button to start the timer.
+   - While the timer is running, the button changes to "Pause." Press it again to pause the timer.
+
+2. **Record Lap Times:**
+
+   - Press the "Lap" button to record a lap time while the timer is running.
+
+3. **Reset the Stopwatch:**
+
+   - Press the "Reset" button to reset the stopwatch to zero.
+
+4. **View Lap Times:**
+   - The lap times are displayed in a scrollable table below the stopwatch.
+
+## Styling
+
+- The start button has a background color of `#6A5ACD`. When paused, it changes to red.
+- The lap button has a background color of `#D3D3D3`.
+
+## Colors
+
+- `#6A5ACD`: Start button background color.
+- `#D3D3D3`: Lap button background color.
+- `#808080`: Used for some text color.
+
+## Dependencies
+
+This app was built using Flutter.
+
+## Running the App
+
+1. Make sure you have Flutter installed. If not, follow the Flutter installation guide: [Flutter Installation](https://flutter.dev/docs/get-started/install).
+
+2. Clone this repository:
+
+   ```bash
+   git clone https://github.com/your_username/stopwatch_app.git
+
+   ```
+
+3. Navigate to the project directory:
+   cd stopwatch_app
+
+4. Run the app:
+   flutter run
