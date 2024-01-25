@@ -6,14 +6,14 @@ buildTimeCard({required String time}) => Column(
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            // color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             time,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Colors.white,
               fontSize: 45,
             ),
           ),

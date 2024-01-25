@@ -101,7 +101,7 @@ class _StopwatchAppState extends State<StopwatchApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Color.fromARGB(255, 0, 0, 0),
       body: SafeArea(
         child: Padding(
@@ -119,9 +119,8 @@ class _StopwatchAppState extends State<StopwatchApp> {
                 children: [
                   Expanded(
                     child: RawMaterialButton(
-                      // onPressed: () => {
-                      //   (!started) ? start() : stop();
-                      // },
+                      onPressed: () =>
+                        (!started) ? start() : stop(),
                       shape: StadiumBorder(
                         side: BorderSide(color: Colors.blue),
                       ),
